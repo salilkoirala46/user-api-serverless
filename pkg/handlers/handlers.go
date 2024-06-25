@@ -9,19 +9,41 @@ import(
 
 var ErroorMethodNotAllowed = "Method Not allowed"
 
-func GetUser(){
+type ErrorBody Struct {
+	ErrorMessage string `json:"error, omitempty"`
+}
+
+func GetUser(req events.APIGatewayProxyRequest, tableName string, dynaClient dynamodbiface.DynamoDBAPI)(*events.APIGatewayProxyResponse, error){
+	email := req.PathParameters["email"]
+
+	if len(email) > 0 {
+		result, err := user.FetchUser(email, tableName, dynaClient)
+
+		if err != nil {
+			return apiResponse(http.StatusBadRequestt, ErrorBody{aws.String(err.Error())}), nil
+		}
+
+		return apiResponse(http.StatusOK, result), nil
+	}
+
+	result, err := user.FetchUser(tableName, dynaClient)
+
+	if err != nil {
+		return apiResponse(http.StatusBadRequestt, ErrorBody{aws.String(err.Error())}), nil
+	}
+
+	return apiResponse(http.StatusOK, result), nil
+}
+
+func CreateUser(req events.APIGatewayProxyRequest, tableName string, dynaClient dynamodbiface.DynamoDBAPI)(*events.APIGatewayProxyResponse, error){
 
 }
 
-func CreateUser(){
+func UpdateUser(req events.APIGatewayProxyRequest, tableName string, dynaClient dynamodbiface.DynamoDBAPI)(*events.APIGatewayProxyResponse, error){
 
 }
 
-func UpdateUser(){
-
-}
-
-func DeleteUser(){
+func DeleteUser(req events.APIGatewayProxyRequest, tableName string, dynaClient dynamodbiface.DynamoDBAPI)(*events.APIGatewayProxyResponse, error){
 
 }
 
